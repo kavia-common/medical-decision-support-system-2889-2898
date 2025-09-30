@@ -1,3 +1,4 @@
 # Minimal requirements for isolated testing: only Django and Django REST Framework
 Django
 djangorestframework
+setuptools>=68.0.0
