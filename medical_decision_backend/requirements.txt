@@ -15,3 +15,8 @@ PyYAML==6.0.2
 sqlparse==0.5.3
 uritemplate==4.1.1
 django-cors-headers==4.7.0
+# Optional vector DB libraries (imported defensively in code)
+faiss-cpu==1.8.0.post1
+chromadb==0.5.5
+# For typing and runtime robustness
+typing-extensions>=4.10.0

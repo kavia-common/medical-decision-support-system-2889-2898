@@ -20,17 +20,21 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.views.decorators.csrf import csrf_exempt
+from api.utils import ocean_professional_openapi_branding
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
 ]
 
+branding = ocean_professional_openapi_branding()
 schema_view = get_schema_view(
    openapi.Info(
-      title="My API",
-      default_version='v1',
-      description="Test description",
+      title=branding["title"],
+      default_version=branding["version"],
+      description=branding["description"],
+      contact=openapi.Contact(name=branding["contact"]["name"], email=branding["contact"]["email"]),
+      x_logo={"url": "", "backgroundColor": branding["x-theme"]["background"]},
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
@@ -49,19 +53,23 @@ def get_full_url(request):
 @csrf_exempt
 def dynamic_schema_view(request, *args, **kwargs):
     url = get_full_url(request)
+    br = ocean_professional_openapi_branding()
     view = get_schema_view(
         openapi.Info(
-            title="My API",
-            default_version='v1',
-            description="API Docs",
+            title=br["title"],
+            default_version=br["version"],
+            description=br["description"],
+            contact=openapi.Contact(name=br["contact"]["name"], email=br["contact"]["email"]),
+            x_logo={"url": "", "backgroundColor": br["x-theme"]["background"]},
         ),
         public=True,
         url=url,
+        permission_classes=(permissions.AllowAny,),
     )
     return view.with_ui('swagger', cache_timeout=0)(request)
 
 urlpatterns += [
     re_path(r'^docs/$', dynamic_schema_view, name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    re_path(r'^swagger\.json$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^openapi\.json$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
 ]
