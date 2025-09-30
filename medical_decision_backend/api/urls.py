@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import health
-# Import from the module file 'views_chat.py' (not the package folder 'views_chat/')
+# Import view functions directly from the module file 'views_chat.py'.
+# Do NOT import from the package 'views_chat/' to avoid circular imports.
 from .views_chat import chat, recommend, upload_report, get_recommendation
 
 urlpatterns = [
