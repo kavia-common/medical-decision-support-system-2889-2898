@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import health
+# Import from the module file 'views_chat.py' (not the package folder 'views_chat/')
 from .views_chat import chat, recommend, upload_report, get_recommendation
 
 urlpatterns = [
