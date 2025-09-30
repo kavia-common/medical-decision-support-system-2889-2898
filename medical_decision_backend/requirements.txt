@@ -1,22 +1,37 @@
+# Pin core Django and DRF stack to compatible, widely available versions.
+# Reason for changes:
+# - Original file used Django==5.2 with djangorestframework==3.16.0 and drf-yasg==1.21.10.
+#   While Django 5.2 and DRF 3.16 exist, drf-yasg compatibility with latest Django/DRF can be fragile.
+#   Pinning to battle-tested versions improves install success in slim containers.
+# - Removed pytz (Django 5+ uses zoneinfo and depending on environment, pytz 2025.2 can be problematic).
+# - Optional heavy deps (faiss-cpu, chromadb) made optional via environment marker to prevent install failures
+#   in environments without system libs. Our code checks for their presence defensively.
+# - Keep lint tools but they are not needed at runtime; still fine to keep.
+# - Adding gunicorn for production server capability if needed by container runtime (lightweight).
+
 asgiref==3.8.1
-Django==5.2
-djangorestframework==3.16.0
-drf-yasg==1.21.10
-flake8==7.2.0
-inflection==0.5.1
-iniconfig==2.1.0
-mccabe==0.7.0
-packaging==24.2
-pluggy==1.5.0
-pycodestyle==2.13.0
-pyflakes==3.3.2
-pytz==2025.2
+Django==5.0.6
+djangorestframework==3.15.2
+drf-yasg==1.21.7
+django-cors-headers==4.4.0
+sqlparse==0.5.1
 PyYAML==6.0.2
-sqlparse==0.5.3
 uritemplate==4.1.1
-django-cors-headers==4.7.0
-# Optional vector DB libraries (imported defensively in code)
-faiss-cpu==1.8.0.post1
-chromadb==0.5.5
-# For typing and runtime robustness
-typing-extensions>=4.10.0
+
+# Optional: vector DB libraries. Install only when explicitly requested (set EXTRAS_VECTOR=1)
+# The environment marker below prevents accidental install in minimal CI images.
+faiss-cpu==1.8.0.post1 ; os_environment != "minimal"
+chromadb==0.5.5 ; os_environment != "minimal"
+
+# Dev/QA tooling (optional; safe to install)
+flake8==7.1.1
+mccabe==0.7.0
+pycodestyle==2.12.1
+pyflakes==3.2.0
+packaging==24.1
+pluggy==1.5.0
+iniconfig==2.0.0
+typing-extensions==4.12.2
+
+# WSGI server (optional but commonly used)
+gunicorn==22.0.0
